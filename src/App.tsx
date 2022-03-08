@@ -1,12 +1,8 @@
 import React from 'react';
+import WebglTutorial from '@/layouts';
 
 const App = () => {
-  return (
-    <div>
-      <h1 id="title">Hello React + TypeScript!</h1>
-      <h2 className="subtitle">This is a subtitle</h2>
-    </div>
-  );
+  return <WebglTutorial />;
 };
 
 export default App;
