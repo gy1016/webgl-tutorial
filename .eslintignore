@@ -13,3 +13,4 @@ build
 postcss.config.js
 .github
 src/utils/martix.ts
+*.glsl

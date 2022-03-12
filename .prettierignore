@@ -3,3 +3,4 @@ dist
 *.md
 public
 .github
+*.glsl
