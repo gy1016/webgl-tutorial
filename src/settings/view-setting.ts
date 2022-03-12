@@ -1,5 +1,6 @@
 import { ReactNode, createElement } from 'react';
 import ColoredPoints from '@/views/colored-points';
+import HelloTriangle from '@/views/hello-triangle';
 
 interface IViewProps {
   id: number; // 视图ID
@@ -13,6 +14,12 @@ const ViewArr: Array<IViewProps> = [
     id: 1,
     path: 'colored-points',
     element: createElement(ColoredPoints),
+    default: true,
+  },
+  {
+    id: 2,
+    path: 'hello-triangle',
+    element: createElement(HelloTriangle),
     default: true,
   },
 ];

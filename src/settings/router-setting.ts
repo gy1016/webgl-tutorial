@@ -12,6 +12,11 @@ const RouterArr: Array<IRouterProps> = [
     label: 'colored-points',
     path: 'colored-points',
   },
+  {
+    id: 2,
+    label: 'hello-triangle',
+    path: 'hello-triangle',
+  },
 ];
 
 export default RouterArr;
