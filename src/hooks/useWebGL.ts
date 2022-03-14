@@ -190,11 +190,19 @@ export function initVertexBuffers(
   return n;
 }
 
-export function init3DVertexBuffers(gl: IWebGLCtx, vertices: Float32Array, colors: Float32Array, indices: Uint8Array) {
+export function init3DVertexBuffers(
+  gl: IWebGLCtx,
+  vertices: Float32Array,
+  colors: Float32Array,
+  indices: Uint8Array,
+  normals?: Float32Array,
+) {
   const indexBuffer = gl.createBuffer();
   if (!indexBuffer) return -1;
   if (!initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'a_Position')) return -1;
   if (!initArrayBuffer(gl, colors, 3, gl.FLOAT, 'a_Color')) return -1;
+  if (normals) initArrayBuffer(gl, normals, 3, gl.FLOAT, 'a_Normal');
+
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
   return indices.length;

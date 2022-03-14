@@ -7,6 +7,7 @@ import PerspectiveMvp from '@/views/perspective-mvp';
 import DepthBuffer from '@/views/depth-buffer';
 import PolygonOffset from '@/views/polygon-offset';
 import ColoredCube from '@/views/colored-cube';
+import PointLightedCube from '@/views/point-lighted-cube';
 
 interface IViewProps {
   id: number; // 视图ID
@@ -62,6 +63,12 @@ const ViewArr: Array<IViewProps> = [
     id: 8,
     path: 'colored-cube',
     element: createElement(ColoredCube),
+    default: true,
+  },
+  {
+    id: 9,
+    path: 'point-lighted-cube',
+    element: createElement(PointLightedCube),
     default: true,
   },
 ];
