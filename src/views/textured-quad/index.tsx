@@ -1,7 +1,6 @@
 import React from 'react';
 import { useWebGL, initVertexBuffers, initTextures } from '@/hooks/useWebGL';
 import djfcz from '@/assets/djfcz.png';
-import sky from '@/assets/sky.jpg';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-textured-quad.glsl';
 import fShader from '@/shader/f-textured-quad.glsl';

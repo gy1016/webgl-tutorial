@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 export interface IWebGLCtx extends WebGLRenderingContext {
   program: WebGLProgram;
 }
@@ -117,6 +118,28 @@ function loadTexture(gl: IWebGLCtx, n: number, texture: WebGLTexture, u_Sampler:
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); // Draw the rectangle
 }
 
+function initArrayBuffer(gl: IWebGLCtx, data: Float32Array, num: number, type: number, attribute: string) {
+  const buffer = gl.createBuffer(); // Create a buffer object
+  if (!buffer) {
+    console.log('Failed to create the buffer object');
+    return false;
+  }
+  // Write date into the buffer object
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  // Assign the buffer object to the attribute variable
+  const a_attribute = gl.getAttribLocation(gl.program, attribute);
+  if (a_attribute < 0) {
+    console.log('Failed to get the storage location of ' + attribute);
+    return false;
+  }
+  gl.vertexAttribPointer(a_attribute, num, type, false, 0, 0);
+  // Enable the assignment of the buffer object to the attribute variable
+  gl.enableVertexAttribArray(a_attribute);
+
+  return true;
+}
+
 // eslint-disable-next-line max-params
 export function initVertexBuffers(
   gl: IWebGLCtx,
@@ -165,6 +188,16 @@ export function initVertexBuffers(
   }
 
   return n;
+}
+
+export function init3DVertexBuffers(gl: IWebGLCtx, vertices: Float32Array, colors: Float32Array, indices: Uint8Array) {
+  const indexBuffer = gl.createBuffer();
+  if (!indexBuffer) return -1;
+  if (!initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'a_Position')) return -1;
+  if (!initArrayBuffer(gl, colors, 3, gl.FLOAT, 'a_Color')) return -1;
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+  return indices.length;
 }
 
 export function initTextures(gl: IWebGLCtx, n: number, src: string) {

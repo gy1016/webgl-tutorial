@@ -42,6 +42,11 @@ const RouterArr: Array<IRouterProps> = [
     label: 'polygon-offset',
     path: 'polygon-offset',
   },
+  {
+    id: 8,
+    label: 'colored-cube',
+    path: 'colored-cube',
+  },
 ];
 
 export default RouterArr;
