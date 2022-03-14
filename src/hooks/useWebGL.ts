@@ -6,31 +6,11 @@ export function useWebGL(canvasEl: HTMLCanvasElement, VSHADER_SOURCE: string, FS
   const gl = canvasEl.getContext('webgl') as IWebGLCtx;
   if (!gl) {
     console.log('Failed to get the rendering context for WebGL');
-    return;
   }
 
   // Initialize shaders
   if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
     console.log('Failed to intialize shaders.');
-    return;
-  }
-
-  // // Get the storage location of a_Position
-  const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-  if (a_Position < 0) {
-    console.log('Failed to get the storage location of a_Position');
-    return;
-  }
-
-  // Get the storage location of u_FragColor
-  const u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
-  if (!u_FragColor) {
-    console.log('Failed to get the storage location of u_FragColor');
-  }
-
-  const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
-  if (a_Color < 0) {
-    console.log('Failed to get the storage location of a_Color');
   }
 
   // Specify the color for clearing <canvas>
@@ -39,7 +19,7 @@ export function useWebGL(canvasEl: HTMLCanvasElement, VSHADER_SOURCE: string, FS
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  return { gl, a_Position, u_FragColor, a_Color };
+  return { gl };
 }
 
 function initShaders(gl: IWebGLCtx, vshader: string, fshader: string) {
@@ -115,13 +95,37 @@ function loadShader(gl: IWebGLCtx, type: number, source: string) {
   return shader;
 }
 
-export function initVertexBuffers(gl: IWebGLCtx, a_Position: number, a_Color: number) {
-  const verticesColors = new Float32Array([
-    // Vertex coordinates and color
-    0.0, 0.5, 1.0, 0.0, 0.0, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, -0.5, 0.0, 0.0, 1.0,
-  ]);
-  const n = 3; // The number of vertices
+// eslint-disable-next-line max-params
+function loadTexture(gl: IWebGLCtx, n: number, texture: WebGLTexture, u_Sampler: WebGLUniformLocation, image: any) {
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis
+  // Enable texture unit0
+  gl.activeTexture(gl.TEXTURE0);
+  // Bind the texture object to the target
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  // Set the texture parameters
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  // Set the texture image
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  // Set the texture unit 0 to the sampler
+  gl.uniform1i(u_Sampler, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT); // Clear <canvas>
 
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); // Draw the rectangle
+}
+
+// eslint-disable-next-line max-params
+export function initVertexBuffers(
+  gl: IWebGLCtx,
+  vertices: Float32Array,
+  n: number,
+  size: number,
+  stride: number,
+  offset: number,
+) {
   // Create a buffer object
   const vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) {
@@ -132,20 +136,62 @@ export function initVertexBuffers(gl: IWebGLCtx, a_Position: number, a_Color: nu
   // Bind the buffer object to target
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   // Write date into the buffer object
-  gl.bufferData(gl.ARRAY_BUFFER, verticesColors, gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-  const FSIZE = verticesColors.BYTES_PER_ELEMENT;
+  const FSIZE = vertices.BYTES_PER_ELEMENT;
 
-  // Assign the buffer object to a_Position variable
-  gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE * 5, 0);
+  const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+  if (a_Position < 0) {
+    console.log('Failed to get the storage location of a_Position');
+  } else {
+    gl.vertexAttribPointer(a_Position, size, gl.FLOAT, false, FSIZE * stride, 0);
+    gl.enableVertexAttribArray(a_Position);
+  }
 
-  // Enable the assignment to a_Position variable
-  gl.enableVertexAttribArray(a_Position);
+  const a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+  if (a_Color < 0) {
+    console.log('Failed to get the storage location of a_Color');
+  } else {
+    gl.vertexAttribPointer(a_Color, size, gl.FLOAT, false, FSIZE * stride, FSIZE * offset);
+    gl.enableVertexAttribArray(a_Color); // Enable the assignment of the buffer object
+  }
 
-  gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 5, FSIZE * 2);
-  gl.enableVertexAttribArray(a_Color);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  const a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord');
+  if (a_TexCoord < 0) {
+    console.log('Failed to get the storage location of a_TexCoord');
+  } else {
+    gl.vertexAttribPointer(a_TexCoord, size, gl.FLOAT, false, FSIZE * stride, FSIZE * offset);
+    gl.enableVertexAttribArray(a_TexCoord);
+  }
 
   return n;
+}
+
+export function initTextures(gl: IWebGLCtx, n: number, src: string) {
+  // Create a texture object
+  const texture = gl.createTexture();
+  if (!texture) {
+    console.log('Failed to create the texture object');
+    return false;
+  }
+
+  // Get the storage location of u_Sampler
+  const u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler');
+  if (!u_Sampler) {
+    console.log('Failed to get the storage location of u_Sampler');
+    return false;
+  }
+
+  // Create the image object
+  const image = new Image();
+  if (!image) {
+    console.log('Failed to create the image object');
+    return false;
+  }
+  image.src = src;
+  image.onload = function () {
+    loadTexture(gl, n, texture, u_Sampler, image);
+  };
+
+  return true;
 }

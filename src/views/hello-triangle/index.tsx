@@ -6,8 +6,9 @@ import fShader from '@/shader/f-hello-triangle.glsl';
 
 const HelloTriangle = () => {
   const main = (canvasEle: HTMLCanvasElement) => {
-    const { gl, a_Position, a_Color }: any = useWebGL(canvasEle, vShader, fShader);
-    const n = initVertexBuffers(gl, a_Position, a_Color);
+    const { gl }: any = useWebGL(canvasEle, vShader, fShader);
+    const vertices = new Float32Array([0, 0.5, -0.5, -0.5, 0.5, -0.5]);
+    const n = initVertexBuffers(gl, vertices, 3, 2, 0, 0);
     gl.drawArrays(gl.TRIANGLES, 0, n);
   };
 

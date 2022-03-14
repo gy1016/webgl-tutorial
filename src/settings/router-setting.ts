@@ -17,6 +17,31 @@ const RouterArr: Array<IRouterProps> = [
     label: 'hello-triangle',
     path: 'hello-triangle',
   },
+  {
+    id: 3,
+    label: 'textured-quad',
+    path: 'textured-quad',
+  },
+  {
+    id: 4,
+    label: 'look-at-triangle',
+    path: 'look-at-triangle',
+  },
+  {
+    id: 5,
+    label: 'perspective-mvp',
+    path: 'perspective-mvp',
+  },
+  {
+    id: 6,
+    label: 'depth-buffer',
+    path: 'depth-buffer',
+  },
+  {
+    id: 7,
+    label: 'polygon-offset',
+    path: 'polygon-offset',
+  },
 ];
 
 export default RouterArr;
