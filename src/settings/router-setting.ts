@@ -58,6 +58,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'lighted-sphere',
   },
   {
+    id: 11,
+    label: 'multi-joint',
+    path: 'multi-joint',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',

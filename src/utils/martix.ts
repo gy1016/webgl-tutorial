@@ -1,7 +1,15 @@
 export default class Matrix4 {
   public elements: Float32Array;
-  constructor() {
-    this.elements = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  constructor(m?: Matrix4) {
+    if (!m) this.elements = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    else {
+      let s = m.elements;
+      let d = new Float32Array(16);
+      for (let i = 0; i < 16; ++i) {
+        d[i] = s[i];
+      }
+      this.elements = d;
+    }
   }
 
   setIdentity() {

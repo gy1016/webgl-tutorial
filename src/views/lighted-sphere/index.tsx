@@ -1,5 +1,5 @@
 import React from 'react';
-import { useWebGL, initCircleVertexBuffers, initTextures, initEventHndlers } from '@/hooks/useWebGL';
+import { useWebGL, initCircleVertexBuffers, initTextures } from '@/hooks/useWebGL';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-lighted-sphere.glsl';
 import fShader from '@/shader/f-lighted-sphere.glsl';

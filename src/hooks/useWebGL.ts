@@ -306,3 +306,22 @@ export function initTextures(gl: IWebGLCtx, n: number, src: string) {
 
   return true;
 }
+
+export function initCubeVertexBuffersNoColor(
+  gl: IWebGLCtx,
+  vertices: Float32Array,
+  indices: Uint8Array,
+  normals: Float32Array,
+) {
+  if (!initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'a_Position')) return -1;
+  if (!initArrayBuffer(gl, normals, 3, gl.FLOAT, 'a_Normal')) return -1;
+
+  const indexBuffer = gl.createBuffer();
+  if (!indexBuffer) {
+    console.log('Failed to create the buffer object');
+    return -1;
+  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+  return indices.length;
+}

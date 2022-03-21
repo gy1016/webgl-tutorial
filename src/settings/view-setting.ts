@@ -9,6 +9,7 @@ import PolygonOffset from '@/views/polygon-offset';
 import ColoredCube from '@/views/colored-cube';
 import PointLightedCube from '@/views/point-lighted-cube';
 import LightedSphere from '@/views/lighted-sphere';
+import MultiJoint from '@/views/multijoint-model';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -77,6 +78,12 @@ const ViewArr: Array<IViewProps> = [
     id: 10,
     path: 'lighted-sphere',
     element: createElement(LightedSphere),
+    default: false,
+  },
+  {
+    id: 11,
+    path: 'multi-joint',
+    element: createElement(MultiJoint),
     default: false,
   },
   {
