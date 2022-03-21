@@ -1,5 +1,5 @@
 import React from 'react';
-import { useWebGL, init3DVertexBuffers, IWebGLCtx } from '@/hooks/useWebGL';
+import { useWebGL, init3DVertexBuffers } from '@/hooks/useWebGL';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-point-lighted.glsl';
 import fShader from '@/shader/f-point-lighted.glsl';

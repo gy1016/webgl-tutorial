@@ -96,7 +96,6 @@ function loadShader(gl: IWebGLCtx, type: number, source: string) {
   return shader;
 }
 
-// eslint-disable-next-line max-params
 function loadTexture(gl: IWebGLCtx, n: number, texture: WebGLTexture, u_Sampler: WebGLUniformLocation, image: any) {
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis
   // Enable texture unit0
@@ -113,11 +112,22 @@ function loadTexture(gl: IWebGLCtx, n: number, texture: WebGLTexture, u_Sampler:
   // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
   // Set the texture unit 0 to the sampler
   gl.uniform1i(u_Sampler, 0);
+
+  gl.clearColor(0.8, 0.8, 0.8, 1);
   gl.clear(gl.COLOR_BUFFER_BIT); // Clear <canvas>
 
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, n); // Draw the rectangle
+  console.log('hualehuale');
+  gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_SHORT, 0); // Draw the rectangle
 }
 
+/**
+ * @param gl webgl上下文
+ * @param data 存入缓冲区中的数据
+ * @param num 每个顶点属性的组成量
+ * @param type 数组中每个元素的数据类型
+ * @param attribute 要获取顶点着色器中的哪个attribute变量
+ * @returns ture | false
+ */
 function initArrayBuffer(gl: IWebGLCtx, data: Float32Array, num: number, type: number, attribute: string) {
   const buffer = gl.createBuffer(); // Create a buffer object
   if (!buffer) {
@@ -140,7 +150,67 @@ function initArrayBuffer(gl: IWebGLCtx, data: Float32Array, num: number, type: n
   return true;
 }
 
-// eslint-disable-next-line max-params
+export function initCircleVertexBuffers(gl: IWebGLCtx, sphereDiv: number) {
+  const positions = [];
+  const indices = [];
+  const texPos = [];
+
+  // 这里为什么是小于等于呢?
+  // 因为在一个圆中，要有一个点出现两次，这样才能重合
+  // sin(0) = sin(180)
+  for (let j = 0; j <= sphereDiv; j++) {
+    // 角度从0 -> pi
+    let zRad = (j * Math.PI) / sphereDiv;
+    let r = Math.sin(zRad);
+    let z = Math.cos(zRad);
+    let v = j / sphereDiv;
+    for (let i = 0; i <= sphereDiv; i++) {
+      // 角度从 0 -> 2pi
+      let xyRad = (i * 2 * Math.PI) / sphereDiv;
+      let x = r * Math.sin(xyRad);
+      let y = r * Math.cos(xyRad);
+
+      positions.push(...[x, y, z]);
+
+      let u = i / sphereDiv;
+      texPos.push(...[u, v]);
+    }
+  }
+
+  // 这里为什么是小于呢？
+  // 因为在上面等于产生的点，实际上是位置相等，仅仅为了闭合
+  for (let j = 0; j < sphereDiv; j++) {
+    for (let i = 0; i < sphereDiv; i++) {
+      // 第j圈的第i个点
+      // 之所以sphereDiv + 1是因为有一列是重复的点（为了闭合的）
+      let p1 = j * (sphereDiv + 1) + i;
+      // p1下面的点，即第j+1圈的第i个点
+      let p2 = p1 + (sphereDiv + 1);
+
+      indices.push(...[p1, p2, p1 + 1]);
+      indices.push(...[p2, p2 + 1, p1 + 1]);
+    }
+  }
+
+  if (!initArrayBuffer(gl, new Float32Array(positions), 3, gl.FLOAT, 'a_Position')) return -1;
+  // if (!initArrayBuffer(gl, new Float32Array(positions), 3, gl.FLOAT, 'a_Normal')) return [-1, -1];
+  if (!initArrayBuffer(gl, new Float32Array(texPos), 2, gl.FLOAT, 'a_TexCoord')) return -1;
+
+  // Unbind the buffer object
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+  const indexBuffer = gl.createBuffer();
+  if (!indexBuffer) {
+    console.log('Failed to create the buffer object');
+    return -1;
+  }
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+  return indices.length;
+}
+
 export function initVertexBuffers(
   gl: IWebGLCtx,
   vertices: Float32Array,

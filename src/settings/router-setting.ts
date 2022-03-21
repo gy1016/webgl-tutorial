@@ -52,6 +52,16 @@ const RouterArr: Array<IRouterProps> = [
     label: 'point-lighted-cube',
     path: 'point-lighted-cube',
   },
+  {
+    id: 10,
+    label: 'lighted-sphere',
+    path: 'lighted-sphere',
+  },
+  {
+    id: 99,
+    label: 'test',
+    path: 'test',
+  },
 ];
 
 export default RouterArr;
