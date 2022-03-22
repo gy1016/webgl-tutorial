@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useEffect } from 'react';
 
 interface IMyCanvas {
   main: (canvasEle: HTMLCanvasElement) => void;
@@ -9,12 +9,23 @@ const MyCanvas = (props: IMyCanvas) => {
   const webgl = useRef<HTMLCanvasElement>(null);
   const { main } = props;
 
-  useLayoutEffect(() => {
+  const draw = () => {
     if (webgl.current && parentRef.current) {
       webgl.current.width = parentRef.current.clientWidth;
       webgl.current.height = parentRef.current.clientHeight;
     }
     main(webgl.current as HTMLCanvasElement);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', draw);
+    return () => {
+      window.removeEventListener('resize', draw);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    draw();
   }, []);
 
   return (
