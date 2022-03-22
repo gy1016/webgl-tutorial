@@ -11,6 +11,7 @@ import PointLightedCube from '@/views/point-lighted-cube';
 import LightedSphere from '@/views/lighted-sphere';
 import MultiJoint from '@/views/multijoint-model';
 import PickFace from '@/views/pick-face';
+import Fog from '@/views/fog';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -91,6 +92,12 @@ const ViewArr: Array<IViewProps> = [
     id: 12,
     path: 'pick-face',
     element: createElement(PickFace),
+    default: false,
+  },
+  {
+    id: 13,
+    path: 'fog',
+    element: createElement(Fog),
     default: false,
   },
   {
