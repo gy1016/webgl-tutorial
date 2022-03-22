@@ -13,6 +13,7 @@ import MultiJoint from '@/views/multijoint-model';
 import PickFace from '@/views/pick-face';
 import Fog from '@/views/fog';
 import RoundedPoints from '@/views/rounded-points';
+import AlphaBlending from '@/views/alpha-blending';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -105,6 +106,12 @@ const ViewArr: Array<IViewProps> = [
     id: 14,
     path: 'rounded-points',
     element: createElement(RoundedPoints),
+    default: false,
+  },
+  {
+    id: 15,
+    path: 'alpha-blending',
+    element: createElement(AlphaBlending),
     default: false,
   },
   {

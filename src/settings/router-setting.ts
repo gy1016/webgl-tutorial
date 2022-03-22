@@ -78,6 +78,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'rounded-points',
   },
   {
+    id: 15,
+    label: 'alpha-blending',
+    path: 'alpha-blending',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',
