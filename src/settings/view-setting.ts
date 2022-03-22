@@ -10,6 +10,7 @@ import ColoredCube from '@/views/colored-cube';
 import PointLightedCube from '@/views/point-lighted-cube';
 import LightedSphere from '@/views/lighted-sphere';
 import MultiJoint from '@/views/multijoint-model';
+import PickFace from '@/views/pick-face';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -84,6 +85,12 @@ const ViewArr: Array<IViewProps> = [
     id: 11,
     path: 'multi-joint',
     element: createElement(MultiJoint),
+    default: false,
+  },
+  {
+    id: 12,
+    path: 'pick-face',
+    element: createElement(PickFace),
     default: false,
   },
   {

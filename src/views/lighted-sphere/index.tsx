@@ -1,25 +1,15 @@
 import React from 'react';
-import { useWebGL, initCircleVertexBuffers, initTextures } from '@/hooks/useWebGL';
+import { useWebGL, initCircleVertexBuffers, initTextures, initEventHndlers, IWebGLCtx } from '@/hooks/useWebGL';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-lighted-sphere.glsl';
 import fShader from '@/shader/f-lighted-sphere.glsl';
 import Matrix4 from '@/utils/martix';
 import earth from '@/assets/earth.jpg';
 
-let ANGLE_STEP = 30.0;
-let currentAngle = 0;
-let g_last = Date.now();
-
-function animate(angle: number) {
-  let now = Date.now();
-  let elapsed = now - g_last;
-  g_last = now;
-  let newAngle = (angle + (ANGLE_STEP * elapsed) / 1000.0) % 360;
-  return newAngle;
-}
-
 const LightedShpere = () => {
   const main = (canvasEle: HTMLCanvasElement) => {
+    const currentAngle = [0, 0];
+
     const { gl } = useWebGL(canvasEle, vShader, fShader);
     const n = initCircleVertexBuffers(gl, 150);
 
@@ -29,15 +19,35 @@ const LightedShpere = () => {
       return;
     }
     const mvpMatrix = new Matrix4();
-    const modelMatrix = new Matrix4();
-
-    currentAngle = animate(currentAngle);
-    modelMatrix.setRotate(currentAngle, 0, 1, 0); // Rotate around the y-axis
     mvpMatrix.setPerspective(30, canvasEle.width / canvasEle.height, 1, 100);
-    mvpMatrix.lookAt(0, 0, 6, 0, 0, 0, 0, 1, 0);
-    mvpMatrix.multiply(modelMatrix);
+    mvpMatrix.lookAt(3.0, 3.0, 7.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+    initEventHndlers(canvasEle, currentAngle);
+
+    // mvpMatrix.multiply(modelMatrix);
+
     gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    const tick = () => {
+      draw(gl, n, mvpMatrix, currentAngle, u_MvpMatrix);
+      requestAnimationFrame(tick);
+    };
+    tick();
+  };
+
+  let g_MvpMatrix = new Matrix4(); // Model view projection matrix
+  const draw = (
+    gl: IWebGLCtx,
+    n: number,
+    mvpMatrix: Matrix4,
+    currentAngle: number[],
+    u_MvpMatrix: WebGLUniformLocation,
+  ) => {
+    g_MvpMatrix.set(mvpMatrix);
+    g_MvpMatrix.rotate(currentAngle[0], 1.0, 0.0, 0.0); // Rotation around x-axis
+    g_MvpMatrix.rotate(currentAngle[1], 0.0, 1.0, 0.0); // Rotation around y-axis
+    gl.uniformMatrix4fv(u_MvpMatrix, false, g_MvpMatrix.elements);
 
     if (!initTextures(gl, n, earth)) {
       console.log('无法配置纹理');

@@ -63,6 +63,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'multi-joint',
   },
   {
+    id: 12,
+    label: 'pick-face',
+    path: 'pick-face',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',

@@ -1,4 +1,3 @@
-/* eslint-disable max-params */
 export interface IWebGLCtx extends WebGLRenderingContext {
   program: WebGLProgram;
 }
@@ -115,8 +114,6 @@ function loadTexture(gl: IWebGLCtx, n: number, texture: WebGLTexture, u_Sampler:
 
   gl.clearColor(0.8, 0.8, 0.8, 1);
   gl.clear(gl.COLOR_BUFFER_BIT); // Clear <canvas>
-
-  console.log('hualehuale');
   gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_SHORT, 0); // Draw the rectangle
 }
 
@@ -128,7 +125,7 @@ function loadTexture(gl: IWebGLCtx, n: number, texture: WebGLTexture, u_Sampler:
  * @param attribute 要获取顶点着色器中的哪个attribute变量
  * @returns ture | false
  */
-function initArrayBuffer(gl: IWebGLCtx, data: Float32Array, num: number, type: number, attribute: string) {
+function initArrayBuffer(gl: IWebGLCtx, data: Float32Array | Uint8Array, num: number, type: number, attribute: string) {
   const buffer = gl.createBuffer(); // Create a buffer object
   if (!buffer) {
     console.log('Failed to create the buffer object');
@@ -137,14 +134,14 @@ function initArrayBuffer(gl: IWebGLCtx, data: Float32Array, num: number, type: n
   // Write date into the buffer object
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-  // Assign the buffer object to the attribute variable
+  // Assign the buffer object to the attribute letiable
   const a_attribute = gl.getAttribLocation(gl.program, attribute);
   if (a_attribute < 0) {
     console.log('Failed to get the storage location of ' + attribute);
     return false;
   }
   gl.vertexAttribPointer(a_attribute, num, type, false, 0, 0);
-  // Enable the assignment of the buffer object to the attribute variable
+  // Enable the assignment of the buffer object to the attribute letiable
   gl.enableVertexAttribArray(a_attribute);
 
   return true;
@@ -154,6 +151,12 @@ export function initCircleVertexBuffers(gl: IWebGLCtx, sphereDiv: number) {
   const positions = [];
   const indices = [];
   const texPos = [];
+
+  const indexBuffer = gl.createBuffer();
+  if (!indexBuffer) {
+    console.log('Failed to create the buffer object');
+    return -1;
+  }
 
   // 这里为什么是小于等于呢?
   // 因为在一个圆中，要有一个点出现两次，这样才能重合
@@ -198,12 +201,6 @@ export function initCircleVertexBuffers(gl: IWebGLCtx, sphereDiv: number) {
 
   // Unbind the buffer object
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-  const indexBuffer = gl.createBuffer();
-  if (!indexBuffer) {
-    console.log('Failed to create the buffer object');
-    return -1;
-  }
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
@@ -324,4 +321,120 @@ export function initCubeVertexBuffersNoColor(
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
   return indices.length;
+}
+
+export function initEventHndlers(el: any, currentAngle: number[]) {
+  let dragging = false;
+  let lastX = -1;
+  let lastY = -1;
+
+  el.onmousedown = function (ev: any) {
+    let x = ev.clientX;
+    let y = ev.clientY;
+
+    const rect = ev.target.getBoundingClientRect();
+
+    if (rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom) {
+      lastX = x;
+      lastY = y;
+      dragging = true;
+    }
+  };
+
+  el.onmouseup = function () {
+    dragging = false;
+  };
+
+  el.onmousemove = function (ev: any) {
+    let x = ev.clientX;
+    let y = ev.clientY;
+    if (dragging) {
+      let factor = 100 / el.height;
+      let dx = factor * (x - lastX);
+      let dy = factor * (y - lastY);
+      // Limit x-axis rotation angle to -90 to 90 degrees
+      currentAngle[0] = Math.max(Math.min(currentAngle[0] + dy, 90), -90);
+      currentAngle[1] = currentAngle[1] + dx;
+    }
+    lastX = x;
+    lastY = y;
+  };
+}
+
+export function initCubeWithFace(gl: IWebGLCtx) {
+    // Create a cube
+  //    v6----- v5
+  //   /|      /|
+  //  v1------v0|
+  //  | |     | |
+  //  | |v7---|-|v4
+  //  |/      |/
+  //  v2------v3
+
+  let vertices = new Float32Array([   // Vertex coordinates
+     1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0,-1.0, 1.0,   1.0,-1.0, 1.0,    // v0-v1-v2-v3 front
+     1.0, 1.0, 1.0,   1.0,-1.0, 1.0,   1.0,-1.0,-1.0,   1.0, 1.0,-1.0,    // v0-v3-v4-v5 right
+     1.0, 1.0, 1.0,   1.0, 1.0,-1.0,  -1.0, 1.0,-1.0,  -1.0, 1.0, 1.0,    // v0-v5-v6-v1 up
+    -1.0, 1.0, 1.0,  -1.0, 1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0,-1.0, 1.0,    // v1-v6-v7-v2 left
+    -1.0,-1.0,-1.0,   1.0,-1.0,-1.0,   1.0,-1.0, 1.0,  -1.0,-1.0, 1.0,    // v7-v4-v3-v2 down
+     1.0,-1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0, 1.0,-1.0,   1.0, 1.0,-1.0     // v4-v7-v6-v5 back
+  ]);
+
+  let colors = new Float32Array([   // Colors
+    0.32, 0.18, 0.56,  0.32, 0.18, 0.56,  0.32, 0.18, 0.56,  0.32, 0.18, 0.56, // v0-v1-v2-v3 front
+    0.5, 0.41, 0.69,   0.5, 0.41, 0.69,   0.5, 0.41, 0.69,   0.5, 0.41, 0.69,  // v0-v3-v4-v5 right
+    0.78, 0.69, 0.84,  0.78, 0.69, 0.84,  0.78, 0.69, 0.84,  0.78, 0.69, 0.84, // v0-v5-v6-v1 up
+    0.0, 0.32, 0.61,   0.0, 0.32, 0.61,   0.0, 0.32, 0.61,   0.0, 0.32, 0.61,  // v1-v6-v7-v2 left
+    0.27, 0.58, 0.82,  0.27, 0.58, 0.82,  0.27, 0.58, 0.82,  0.27, 0.58, 0.82, // v7-v4-v3-v2 down
+    0.73, 0.82, 0.93,  0.73, 0.82, 0.93,  0.73, 0.82, 0.93,  0.73, 0.82, 0.93, // v4-v7-v6-v5 back
+  ]);
+
+  let faces = new Uint8Array([   // Faces
+    1, 1, 1, 1,     // v0-v1-v2-v3 front
+    2, 2, 2, 2,     // v0-v3-v4-v5 right
+    3, 3, 3, 3,     // v0-v5-v6-v1 up
+    4, 4, 4, 4,     // v1-v6-v7-v2 left
+    5, 5, 5, 5,     // v7-v4-v3-v2 down
+    6, 6, 6, 6,     // v4-v7-v6-v5 back
+  ]);
+
+  let indices = new Uint8Array([   // Indices of the vertices
+     0, 1, 2,   0, 2, 3,    // front
+     4, 5, 6,   4, 6, 7,    // right
+     8, 9,10,   8,10,11,    // up
+    12,13,14,  12,14,15,    // left
+    16,17,18,  16,18,19,    // down
+    20,21,22,  20,22,23     // back
+  ]);
+
+  // Create a buffer object
+  let indexBuffer = gl.createBuffer();
+  if (!indexBuffer) {
+    return -1;
+  }
+
+  // Write vertex information to buffer object
+  if (!initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'a_Position')) return -1; // Coordinates Information
+  if (!initArrayBuffer(gl, colors, 3, gl.FLOAT, 'a_Color')) return -1;      // Color Information
+  if (!initArrayBuffer(gl, faces, 1, gl.UNSIGNED_BYTE, 'a_Face')) return -1;// Surface Information
+
+  // Unbind the buffer object
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+  // Write the indices to the buffer object
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+  return indices.length;
+}
+
+const ANGLE_STEP = 20.0
+let last = Date.now();  // Last time that this function was called
+export function animate(angle: number) {
+  let now = Date.now(); // Calculate the elapsed time
+  let elapsed = now - last;
+  last = now;
+  // Update the current rotation angle (adjusted by the elapsed time)
+  let newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
+  return newAngle % 360;
 }

@@ -4,3 +4,4 @@ dist
 public
 .github
 *.glsl
+src/hooks/useWebGL.ts
