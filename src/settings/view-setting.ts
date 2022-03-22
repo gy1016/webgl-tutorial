@@ -12,6 +12,7 @@ import LightedSphere from '@/views/lighted-sphere';
 import MultiJoint from '@/views/multijoint-model';
 import PickFace from '@/views/pick-face';
 import Fog from '@/views/fog';
+import RoundedPoints from '@/views/rounded-points';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -98,6 +99,12 @@ const ViewArr: Array<IViewProps> = [
     id: 13,
     path: 'fog',
     element: createElement(Fog),
+    default: false,
+  },
+  {
+    id: 14,
+    path: 'rounded-points',
+    element: createElement(RoundedPoints),
     default: false,
   },
   {

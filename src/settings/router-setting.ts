@@ -73,6 +73,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'fog',
   },
   {
+    id: 14,
+    label: 'rounded-points',
+    path: 'rounded-points',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',
