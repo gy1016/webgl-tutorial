@@ -35,7 +35,7 @@ function initShaders(gl: IWebGLCtx, vshader: string, fshader: string) {
   return true;
 }
 
-function createProgram(gl: IWebGLCtx, vshader: string, fshader: string) {
+export function createProgram(gl: IWebGLCtx, vshader: string, fshader: string) {
   // Create shader object
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);

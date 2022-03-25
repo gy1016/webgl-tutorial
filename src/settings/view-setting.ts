@@ -14,6 +14,7 @@ import PickFace from '@/views/pick-face';
 import Fog from '@/views/fog';
 import RoundedPoints from '@/views/rounded-points';
 import AlphaBlending from '@/views/alpha-blending';
+import ProgramObject from '@/views/program-object';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -112,6 +113,12 @@ const ViewArr: Array<IViewProps> = [
     id: 15,
     path: 'alpha-blending',
     element: createElement(AlphaBlending),
+    default: false,
+  },
+  {
+    id: 15,
+    path: 'program-object',
+    element: createElement(ProgramObject),
     default: false,
   },
   {

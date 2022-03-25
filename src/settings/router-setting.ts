@@ -83,6 +83,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'alpha-blending',
   },
   {
+    id: 16,
+    label: 'program-object',
+    path: 'program-object',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',
