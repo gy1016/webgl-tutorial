@@ -15,6 +15,7 @@ import Fog from '@/views/fog';
 import RoundedPoints from '@/views/rounded-points';
 import AlphaBlending from '@/views/alpha-blending';
 import ProgramObject from '@/views/program-object';
+import FrameBuffer from '@/views/frame-buffer';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -119,6 +120,12 @@ const ViewArr: Array<IViewProps> = [
     id: 15,
     path: 'program-object',
     element: createElement(ProgramObject),
+    default: false,
+  },
+  {
+    id: 16,
+    path: 'frame-buffer',
+    element: createElement(FrameBuffer),
     default: false,
   },
   {

@@ -428,6 +428,100 @@ export function initCubeWithFace(gl: IWebGLCtx) {
   return indices.length;
 }
 
+export function initArrayBufferForLaterUse(gl: IWebGLCtx, data: Float32Array, num: number, type: number) {
+  // Create a buffer object
+  let buffer: Partial<WebGLBuffer & {num: number; type: number}> | null = gl.createBuffer();
+  if (!buffer) {
+    console.log('Failed to create the buffer object');
+    return null;
+  }
+  // Write date into the buffer object
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+  // Store the necessary information to assign the object to the attribute letiable later
+  buffer.num = num;
+  buffer.type = type;
+
+  return buffer;
+}
+
+export function initElementArrayBufferForLaterUse(gl: IWebGLCtx, data: Uint8Array, type: number) {
+  // Create a buffer object
+  let buffer: Partial<WebGLBuffer & {num: number; type: number}> | null = gl.createBuffer();
+  if (!buffer) {
+    console.log('Failed to create the buffer object');
+    return null;
+  }
+  // Write date into the buffer object
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+  buffer.type = type;
+
+  return buffer;
+}
+
+export function initFramebufferObject(gl: IWebGLCtx) {
+  let OFFSCREEN_WIDTH = 256;
+  let OFFSCREEN_HEIGHT = 256;
+  let framebuffer: any;
+  let texture: any;
+  let depthBuffer: any;
+
+  let error = function () {
+    if (framebuffer) gl.deleteFramebuffer(framebuffer);
+    if (texture) gl.deleteTexture(texture);
+    if (depthBuffer) gl.deleteRenderbuffer(depthBuffer);
+    return null;
+  }
+
+  // Create a frame buffer object (FBO)
+  framebuffer = gl.createFramebuffer();
+  if (!framebuffer) {
+    console.log('Failed to create frame buffer object');
+    return error();
+  }
+
+  // Create a texture object and set its size and parameters
+  texture = gl.createTexture(); // Create a texture object
+  if (!texture) {
+    console.log('Failed to create texture object');
+    return error();
+  }
+  gl.bindTexture(gl.TEXTURE_2D, texture); // Bind the object to target
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, OFFSCREEN_WIDTH, OFFSCREEN_HEIGHT, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  framebuffer.texture = texture; // Store the texture object
+
+  depthBuffer = gl.createRenderbuffer(); // Create a renderbuffer object
+  if (!depthBuffer) {
+    console.log('Failed to create renderbuffer object');
+    return error();
+  }
+  gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer); // Bind the object to target
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, OFFSCREEN_WIDTH, OFFSCREEN_HEIGHT);
+
+  // Attach the texture and the renderbuffer object to the FBO
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+
+  // Check if FBO is configured correctly
+  let e = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+  if (gl.FRAMEBUFFER_COMPLETE !== e) {
+    console.log('Frame buffer object is incomplete: ' + e.toString());
+    return error();
+  }
+
+  // Unbind the buffer object
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.bindTexture(gl.TEXTURE_2D, null);
+  gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+
+  return framebuffer;
+}
+
 const ANGLE_STEP = 20.0
 let last = Date.now();  // Last time that this function was called
 export function animate(angle: number) {

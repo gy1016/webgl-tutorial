@@ -88,6 +88,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'program-object',
   },
   {
+    id: 17,
+    label: 'frame-buffer',
+    path: 'frame-buffer',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',
