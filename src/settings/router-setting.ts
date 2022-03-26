@@ -93,6 +93,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'frame-buffer',
   },
   {
+    id: 18,
+    label: 'shadow-map',
+    path: 'shadow-map',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',
