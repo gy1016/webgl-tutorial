@@ -28,6 +28,7 @@ module.exports = merge(base, {
     hot: true,
     proxy: {
       // '/api': 'http://localhost:9000',
+      '/json': 'http://121.199.160.202/',
     },
     historyApiFallback: true,
   },

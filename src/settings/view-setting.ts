@@ -17,6 +17,7 @@ import AlphaBlending from '@/views/alpha-blending';
 import ProgramObject from '@/views/program-object';
 import FrameBuffer from '@/views/frame-buffer';
 import ShadowMap from '@/views/shadow-map';
+import TerrainShow from '@/views/terrain-show';
 import Test from '@/views/test';
 
 interface IViewProps {
@@ -133,6 +134,12 @@ const ViewArr: Array<IViewProps> = [
     id: 17,
     path: 'shadow-map',
     element: createElement(ShadowMap),
+    default: false,
+  },
+  {
+    id: 18,
+    path: 'terrain-show',
+    element: createElement(TerrainShow),
     default: false,
   },
   {

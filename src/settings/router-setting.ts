@@ -98,6 +98,11 @@ const RouterArr: Array<IRouterProps> = [
     path: 'shadow-map',
   },
   {
+    id: 19,
+    label: 'terrain-show',
+    path: 'terrain-show',
+  },
+  {
     id: 99,
     label: 'test',
     path: 'test',
