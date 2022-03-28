@@ -356,7 +356,7 @@ const MultiJoint = () => {
     draw(gl, n, viewProjMatrix, u_MvpMatrix, u_NormalMatrix);
   };
 
-  return <MyCanvas main={main} />;
+  return <MyCanvas main={main} msg="上下左右,zx,cv控制模型" />;
 };
 
 export default MultiJoint;

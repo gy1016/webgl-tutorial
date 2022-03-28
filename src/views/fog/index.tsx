@@ -273,7 +273,7 @@ const Fog = () => {
     gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
   }
 
-  return <MyCanvas main={main} />;
+  return <MyCanvas main={main} msg="上下调整雾化效果" />;
 };
 
 export default Fog;

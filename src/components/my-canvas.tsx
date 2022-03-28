@@ -2,12 +2,13 @@ import React, { useLayoutEffect, useRef, useEffect } from 'react';
 
 interface IMyCanvas {
   main: (canvasEle: HTMLCanvasElement) => void;
+  msg?: string;
 }
 
 const MyCanvas = (props: IMyCanvas) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const webgl = useRef<HTMLCanvasElement>(null);
-  const { main } = props;
+  const { main, msg } = props;
 
   const draw = () => {
     if (webgl.current && parentRef.current) {
@@ -29,7 +30,14 @@ const MyCanvas = (props: IMyCanvas) => {
   }, []);
 
   return (
-    <div id="colored-points" style={{ width: '100%', height: '100%' }} ref={parentRef}>
+    <div id="my-canvas-container" style={{ width: '100%', height: '100%' }} ref={parentRef}>
+      {msg ? (
+        <div id="tip-msg" style={{ position: 'absolute', top: '2rem', right: '2rem', color: '#fff' }}>
+          {msg}
+        </div>
+      ) : (
+        ''
+      )}
       <canvas id="webgl" ref={webgl}>
         Please use a browser that supports canvas
       </canvas>
