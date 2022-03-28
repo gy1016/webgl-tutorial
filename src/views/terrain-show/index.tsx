@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-terrain-show.glsl';
 import fShader from '@/shader/f-terrain-show.glsl';
@@ -8,6 +8,7 @@ import Cuboid from '@/utils/terrain/Cuboid';
 import Matrix4 from '@/utils/martix';
 import tex from '@/assets/tex.jpg';
 
+let timer: any = null;
 let currentAngle = [0.0, 0.0]; // 绕X轴Y轴的旋转角度 ([x-axis, y-axis])
 let curScale = [1.0]; // 当前的缩放比例
 let initTexSuccess = false; // 纹理图像是否加载完成
@@ -70,7 +71,7 @@ function onDraw(gl: IWebGLCtx, el: HTMLCanvasElement, terrain: Terrain) {
       // 绘制矩形体
       gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_SHORT, 0);
     }
-    requestAnimationFrame(tick);
+    timer = requestAnimationFrame(tick);
   };
 
   tick();
@@ -210,6 +211,10 @@ function loadTexture(gl: IWebGLCtx, image: HTMLImageElement) {
 }
 
 const TerrainShow = () => {
+  useEffect(() => {
+    return () => window.cancelAnimationFrame(timer);
+  }, []);
+
   const main = (el: HTMLCanvasElement) => {
     const { gl } = useWebGL(el, vShader, fShader);
     // 指定清空<canvas>的颜色

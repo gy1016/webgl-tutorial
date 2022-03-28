@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWebGL, init3DVertexBuffers } from '@/hooks/useWebGL';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-point-lighted.glsl';
@@ -18,6 +18,10 @@ function animate(angle: number) {
 }
 
 const PointLightedCube = () => {
+  let timer: any = null;
+  useEffect(() => {
+    return () => window.cancelAnimationFrame(timer);
+  }, []);
   const main = (canvasEle: HTMLCanvasElement) => {
     const { gl } = useWebGL(canvasEle, vShader, fShader);
     const vertices = new Float32Array([
@@ -326,7 +330,7 @@ const PointLightedCube = () => {
 
       gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
 
-      requestAnimationFrame(tick);
+      timer = requestAnimationFrame(tick);
     };
 
     tick();

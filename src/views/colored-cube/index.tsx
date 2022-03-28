@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWebGL, init3DVertexBuffers, initEventHndlers, IWebGLCtx } from '@/hooks/useWebGL';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-colored-cube.glsl';
@@ -6,6 +6,11 @@ import fShader from '@/shader/f-colored-cube.glsl';
 import Matrix4 from '@/utils/martix';
 
 const ColoredCube = () => {
+  let timer: any = null;
+  useEffect(() => {
+    return () => window.cancelAnimationFrame(timer);
+  }, []);
+
   const main = (canvasEle: HTMLCanvasElement) => {
     const currentAngle = [0, 0];
     initEventHndlers(canvasEle, currentAngle);
@@ -213,7 +218,7 @@ const ColoredCube = () => {
 
     const tick = () => {
       draw(gl, n, mvpMatrix, currentAngle, u_MvpMatrix);
-      requestAnimationFrame(tick);
+      timer = requestAnimationFrame(tick);
     };
 
     tick();

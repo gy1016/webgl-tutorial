@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import vShadow from '@/shader/v-shadow.glsl';
 import fShadow from '@/shader/f-shadow.glsl';
 import vShadowSource from '@/shader/v-shadow-source.glsl';
@@ -53,6 +53,11 @@ function draw(gl: any, program: any, o: any, viewProjMatrix: any) {
 }
 
 const ShadowMap = () => {
+  let timer: any = null;
+  useEffect(() => {
+    return () => window.cancelAnimationFrame(timer);
+  }, []);
+
   const main = (el: HTMLCanvasElement) => {
     const gl = el.getContext('webgl') as IWebGLCtx;
     if (!gl) {
@@ -143,7 +148,7 @@ const ShadowMap = () => {
       gl.uniformMatrix4fv(normalProgram.u_MvpMatrixFromLight, false, mvpMatrixFromLight_p.elements);
       drawPlane(gl, normalProgram, plane, viewProjMatrix);
 
-      requestAnimationFrame(tick);
+      timer = requestAnimationFrame(tick);
     };
     tick();
   };

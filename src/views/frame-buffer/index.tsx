@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-frame-buffer.glsl';
 import fShader from '@/shader/f-frame-buffer.glsl';
@@ -375,6 +375,11 @@ function drawTexturedPlane(gl: any, program: any, o: any, angle: any, texture: a
 
 const FrameBuffer = () => {
   const main = (el: HTMLCanvasElement) => {
+    let timer: any = null;
+    useEffect(() => {
+      return () => window.cancelAnimationFrame(timer);
+    }, []);
+
     const { gl } = useWebGL(el, vShader, fShader);
 
     let program: any = gl.program; // Get program object
@@ -424,7 +429,7 @@ const FrameBuffer = () => {
     let tick = function () {
       currentAngle = animate(currentAngle); // Update current rotation angle
       draw(gl, el, fbo, plane, cube, currentAngle, texture, viewProjMatrix, viewProjMatrixFBO);
-      window.requestAnimationFrame(tick);
+      timer = window.requestAnimationFrame(tick);
     };
     tick();
   };

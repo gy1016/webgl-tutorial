@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import MyCanvas from '@/components/my-canvas';
 import { IWebGLCtx, createProgram, animate } from '@/hooks/useWebGL';
 import Matrix4 from '@/utils/martix';
@@ -448,6 +448,10 @@ function drawCube(gl: any, program: any, o: any, x: any, angle: any, viewProjMat
 }
 
 const ProgramObject = () => {
+  let timer: any = null;
+  useEffect(() => {
+    return () => window.cancelAnimationFrame(timer);
+  }, []);
   const main = (el: HTMLCanvasElement) => {
     const gl = el.getContext('webgl') as IWebGLCtx;
     if (!gl) {
@@ -523,7 +527,7 @@ const ProgramObject = () => {
       // Draw a cube with texture
       drawTexCube(gl, texProgram, cube, texture, 2.0, currentAngle, viewProjMatrix);
 
-      requestAnimationFrame(tick);
+      timer = requestAnimationFrame(tick);
     };
     tick();
   };

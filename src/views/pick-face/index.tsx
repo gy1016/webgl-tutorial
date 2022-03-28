@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWebGL, initCubeWithFace, animate, IWebGLCtx } from '@/hooks/useWebGL';
 import MyCanvas from '@/components/my-canvas';
 import vShader from '@/shader/v-pick-face.glsl';
@@ -6,6 +6,10 @@ import fShader from '@/shader/f-pick-face.glsl';
 import Matrix4 from '@/utils/martix';
 
 const PickFace = () => {
+  let timer: any = null;
+  useEffect(() => {
+    return () => window.cancelAnimationFrame(timer);
+  }, []);
   const main = (canvasEle: HTMLCanvasElement) => {
     const { gl } = useWebGL(canvasEle, vShader, fShader);
     const n = initCubeWithFace(gl);
@@ -57,7 +61,7 @@ const PickFace = () => {
     const tick = () => {
       currentAngle = animate(currentAngle);
       draw(gl, n, currentAngle, viewProjMatrix, u_MvpMatrix);
-      requestAnimationFrame(tick);
+      timer = requestAnimationFrame(tick);
     };
     tick();
   };
