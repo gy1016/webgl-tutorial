@@ -235,7 +235,7 @@ const TerrainShow = () => {
     };
   };
 
-  return <MyCanvas main={main} />;
+  return <MyCanvas main={main} msg="加载ing(即使文件解析放到webworker中, 任然很慢)..." />;
 };
 
 export default TerrainShow;
