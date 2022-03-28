@@ -323,7 +323,7 @@ export function initCubeVertexBuffersNoColor(
   return indices.length;
 }
 
-export function initEventHndlers(el: any, currentAngle: number[]) {
+export function initEventHndlers(el: any, currentAngle?: number[], currentScale?: number[]) {
   let dragging = false;
   let lastX = -1;
   let lastY = -1;
@@ -345,20 +345,33 @@ export function initEventHndlers(el: any, currentAngle: number[]) {
     dragging = false;
   };
 
-  el.onmousemove = function (ev: any) {
-    let x = ev.clientX;
-    let y = ev.clientY;
-    if (dragging) {
-      let factor = 100 / el.height;
-      let dx = factor * (x - lastX);
-      let dy = factor * (y - lastY);
-      // Limit x-axis rotation angle to -90 to 90 degrees
-      currentAngle[0] = Math.max(Math.min(currentAngle[0] + dy, 90), -90);
-      currentAngle[1] = currentAngle[1] + dx;
+  if(currentAngle) {
+    el.onmousemove = function (ev: any) {
+      let x = ev.clientX;
+      let y = ev.clientY;
+      if (dragging) {
+        let factor = 100 / el.height;
+        let dx = factor * (x - lastX);
+        let dy = factor * (y - lastY);
+        // Limit x-axis rotation angle to -90 to 90 degrees
+        currentAngle[0] = Math.max(Math.min(currentAngle[0] + dy, 90), -90);
+        currentAngle[1] = currentAngle[1] + dx;
+      }
+      lastX = x;
+      lastY = y;
+    };
+  }
+  
+  // 传数组是为了能够传引用，否则传一个数起不到效果；
+  if(currentScale) {
+    el.onmousewheel = function (ev: any) {
+      if (ev.wheelDelta > 0) {
+        currentScale[0] = currentScale[0] as number * 1.1;
+      } else {
+        currentScale[0] = currentScale[0] as number * 0.9;
+      }
     }
-    lastX = x;
-    lastY = y;
-  };
+  }
 }
 
 export function initCubeWithFace(gl: IWebGLCtx) {
